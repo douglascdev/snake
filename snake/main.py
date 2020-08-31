@@ -11,7 +11,7 @@ class Color:
 
 class Screen:
     WIDTH, HEIGHT = 800, 600
-    RECT = (WIDTH, HEIGHT)
+    RECT = WIDTH, HEIGHT
     FPS = 60
 
 
