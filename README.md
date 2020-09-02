@@ -1,2 +1,2 @@
 # snake
-Snake made with Pygame
+SnakeUnit made with Pygame
