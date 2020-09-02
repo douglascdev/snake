@@ -83,7 +83,6 @@ class Snake(pygame.sprite.RenderPlain):
         if len(collided_foods) > 0:
             food_group.add(Food(self))
             last_unit = self.sprites()[len(self.sprites()) - 1]
-            # TODO: this position for the new last unit is wrong
             self.add(SnakeUnit(place_after=last_unit.rect))
 
     def step(self):
@@ -106,7 +105,6 @@ class Snake(pygame.sprite.RenderPlain):
 class Food(pygame.sprite.Sprite):
     def __init__(self, snake_group: Snake):
         pygame.sprite.Sprite.__init__(self)
-        # TODO: use group collision check here instead of passing every rect as argument
         self.rect = random_pos_rect(
             Game.DEFAULT_RECT, [sprite.rect for sprite in snake_group.sprites()]
         )
@@ -118,9 +116,6 @@ def random_pos_rect(size: Union[Rect, Tuple[int, int]], excluded_rects: List[Rec
     """
     Generates random position within the screen. Excludes points that would be out of screen and possibly colliding
     objects, which can be passed though a list.
-    TODO:Performance for excluding points would probably be improved by keeping a full list of points on screen in
-    memory for the function and only limiting the width and height within the generator. Checking if the excluded_rects
-    is empty and skipping exclusion too.
     :param size: rect or tuple with object's width and height
     :param excluded_rects: list of positions that will be excluded from the possible rectangles
     :return: rect with a random position within the screen, with the same dimensions
