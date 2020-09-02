@@ -1,7 +1,7 @@
 # snake
 ![alt text](https://github.com/douglas-cpp/snake/blob/master/snake.png)
 
-A snake game made with the lib Pygame and Python3.
+A snake game made with the lib Pygame and Python3. It's still missing a lot of functionalities, so feel free to contribute.
 
 ## Contribute
 Just fork the repository and make a pull request for one of the issues, or any other improvement you feel like doing!
