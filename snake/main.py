@@ -75,15 +75,15 @@ class Snake(pygame.sprite.RenderPlain):
         if self.frametime_counter >= self.frametime_for_step:
             self.step()
             self.frametime_counter = 0
+            head: SnakeUnit = self.sprites()[0]
+            collided_foods = pygame.sprite.spritecollide(head, food_group, dokill=True)
+            if len(collided_foods) > 0:
+                food_group.add(Food(self))
+                last_unit = self.sprites()[len(self.sprites()) - 1]
+                self.add(SnakeUnit(place_after=last_unit.rect))
         else:
             self.frametime_counter += frametime
 
-        head: SnakeUnit = self.sprites()[0]
-        collided_foods = pygame.sprite.spritecollide(head, food_group, dokill=True)
-        if len(collided_foods) > 0:
-            food_group.add(Food(self))
-            last_unit = self.sprites()[len(self.sprites()) - 1]
-            self.add(SnakeUnit(place_after=last_unit.rect))
 
     def step(self):
         """
