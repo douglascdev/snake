@@ -68,38 +68,47 @@ class Snake(pygame.sprite.RenderPlain):
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN and event.key in self.shortcuts.keys():
                 event: pygame.event.Event
-                self.direction = self.shortcuts.get(event.key)
-
+                # Prevents movement to the opposite direction(snake would collide with itself)
+                opposites = {
+                    Direction.N: Direction.S,
+                    Direction.S: Direction.N,
+                    Direction.W: Direction.E,
+                    Direction.E: Direction.W,
+                }
+                direction = self.shortcuts.get(event.key)
+                if opposites[self.direction] != direction:
+                    self.direction = direction
 
         # Using frametime keeps the movement relatively stable despite the FPS the game is running at
         if self.frametime_counter >= self.frametime_for_step:
             self.step()
             self.frametime_counter = 0
-            head: SnakeUnit = self.sprites()[0]
+            head: SnakeUnit = self.sprites().pop()
             collided_foods = pygame.sprite.spritecollide(head, food_group, dokill=True)
             if len(collided_foods) > 0:
                 food_group.add(Food(self))
-                last_unit = self.sprites()[len(self.sprites()) - 1]
-                self.add(SnakeUnit(place_after=last_unit.rect))
+                new_head = SnakeUnit()
+                x_mov = self.direction.value[0]
+                y_mov = self.direction.value[1]
+                new_head.rect = head.rect.move(x_mov, y_mov)
+                self.add(new_head)
         else:
             self.frametime_counter += frametime
-
 
     def step(self):
         """
         Move all snake units by one step
         """
         sprites: List[SnakeUnit] = self.sprites()
-        sprites_iter = iter(sprites)
-        head: SnakeUnit = next(sprites_iter)
-        last_iter_rect: pygame.rect.Rect = head.rect.copy()
+        head: SnakeUnit = sprites.pop()
         x_mov = self.direction.value[0]
         y_mov = self.direction.value[1]
+        previous_sprite_rect = head.rect.copy()
         head.rect.move_ip(x_mov, y_mov)
-        for sprite in sprites_iter:
-            new_rect = last_iter_rect.copy()
-            last_iter_rect = sprite.rect.copy()
-            sprite.rect = new_rect.copy()
+        for sprite in reversed(sprites):
+            sprite_rect_bkp = sprite.rect
+            sprite.rect = previous_sprite_rect
+            previous_sprite_rect = sprite_rect_bkp
 
 
 class Food(pygame.sprite.Sprite):
@@ -112,7 +121,9 @@ class Food(pygame.sprite.Sprite):
         self.image.fill(Color.WHITE)
 
 
-def random_pos_rect(size: Union[Rect, Tuple[int, int]], excluded_rects: List[Rect]) -> Rect:
+def random_pos_rect(
+    size: Union[Rect, Tuple[int, int]], excluded_rects: List[Rect]
+) -> Rect:
     """
     Generates random position within the screen. Excludes points that would be out of screen and possibly colliding
     objects, which can be passed though a list.
@@ -125,9 +136,10 @@ def random_pos_rect(size: Union[Rect, Tuple[int, int]], excluded_rects: List[Rec
     max_width = Screen.WIDTH - rect.w
     max_height = Screen.HEIGHT - rect.h
     range_for_rect = lambda max_size: range(0, max_size, Game.DEFAULT_RECT_SIZE)
-    # A nested for in a single line... Python is cool af
     possible_screen_rects = (
-        Rect(i, j, rect.w, rect.h) for i in range_for_rect(max_width) for j in range_for_rect(max_height)
+        Rect(i, j, rect.w, rect.h)
+        for i in range_for_rect(max_width)
+        for j in range_for_rect(max_height)
     )
     rects_without_collision = [
         rect
