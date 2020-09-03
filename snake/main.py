@@ -20,7 +20,7 @@ class Screen:
     NUM_BLOCKS_Y = 15
     block_size = Game.DEFAULT_RECT_SIZE
     WIDTH, HEIGHT = block_size * NUM_BLOCKS_X, block_size * NUM_BLOCKS_Y
-    RECT = WIDTH, HEIGHT
+    RECT = Rect(0, 0, WIDTH, HEIGHT)
     FPS = 60
 
 
@@ -56,7 +56,7 @@ class Snake(pygame.sprite.RenderPlain):
         super().__init__(*snake_units)
         self.direction = Direction.E
         self.frametime_counter = 0
-        self.frametime_for_step = 256
+        self.frametime_for_step = 64
         self.shortcuts = {
             pygame.K_UP: Direction.N,
             pygame.K_DOWN: Direction.S,
@@ -92,6 +92,18 @@ class Snake(pygame.sprite.RenderPlain):
                 y_mov = self.direction.value[1]
                 new_head.rect = head.rect.move(x_mov, y_mov)
                 self.add(new_head)
+
+            # Correct snake position if it is out of screen
+            head: SnakeUnit = self.sprites().pop()
+            if head.rect.x < 0:
+                head.rect.x = Screen.WIDTH - head.rect.w
+            elif head.rect.x > Screen.WIDTH - head.rect.w:
+                head.rect.x = 0
+            elif head.rect.y < 0:
+                head.rect.y = Screen.HEIGHT - head.rect.h
+            elif head.rect.y > Screen.HEIGHT - head.rect.h:
+                head.rect.y = 0
+
         else:
             self.frametime_counter += frametime
 
@@ -151,7 +163,7 @@ def random_pos_rect(
 
 if __name__ == "__main__":
     pygame.display.init()
-    pg_screen = pygame.display.set_mode(Screen.RECT)
+    pg_screen = pygame.display.set_mode((Screen.WIDTH, Screen.HEIGHT))
     clock = pygame.time.Clock()
     s = Game.DEFAULT_RECT_SIZE
     u1 = SnakeUnit(place_after=Game.DEFAULT_RECT.move(s * 3, 0))
