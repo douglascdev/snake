@@ -57,6 +57,7 @@ class Snake(pygame.sprite.RenderPlain):
     def __init__(self, *snake_units):
         super().__init__(*snake_units)
         self.direction = Direction.E
+        self.new_direction = self.direction
         self.frametime_counter = 0
         self.frametime_for_step = 64
         self.shortcuts = {
@@ -81,8 +82,8 @@ class Snake(pygame.sprite.RenderPlain):
                     Direction.E: Direction.W,
                 }
                 direction = self.shortcuts.get(event.key)
-                if opposites[self.direction] != direction:
-                    self.direction = direction
+                if opposites.get(self.direction) != direction:
+                    self.new_direction = direction
 
         # Using frametime keeps the movement relatively stable despite the FPS the game is running at
         if self.frametime_counter >= self.frametime_for_step:
@@ -118,6 +119,7 @@ class Snake(pygame.sprite.RenderPlain):
         """
         sprites: List[SnakeUnit] = self.sprites()
         head: SnakeUnit = sprites.pop()
+        self.direction = self.new_direction
         x_mov = self.direction.value[0]
         y_mov = self.direction.value[1]
         previous_sprite_rect = head.rect.copy()
