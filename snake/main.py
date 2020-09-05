@@ -146,7 +146,7 @@ class Food(pygame.sprite.Sprite):
         )
         self.image = pygame.Surface((self.rect.w, self.rect.h), flags=SRCALPHA).convert_alpha()
         x, y = int(self.rect.w / 2) - 1, int(self.rect.h / 2) - 1
-        radius = int(Game.DEFAULT_RECT_SIZE / 2) - 1
+        radius = int(Game.DEFAULT_RECT_SIZE / 2) - 4
         gfxdraw.aacircle(self.image, x, y, radius, Color.RED)
         gfxdraw.filled_circle(self.image, x, y, radius, Color.RED)
 
