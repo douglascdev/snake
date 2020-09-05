@@ -1,8 +1,10 @@
 import pygame
+import sys
 from enum import Enum
 from pygame import Rect
 from typing import Union, Tuple, List
 from random import choice
+from pygame import event
 
 
 class Color:
@@ -66,6 +68,9 @@ class Snake(pygame.sprite.RenderPlain):
 
     def update(self, frametime: int, food_group: pygame.sprite.Group):
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
             if event.type == pygame.KEYDOWN and event.key in self.shortcuts.keys():
                 event: pygame.event.Event
                 # Prevents movement to the opposite direction(snake would collide with itself)
@@ -173,8 +178,9 @@ if __name__ == "__main__":
     foods = pygame.sprite.RenderPlain()
     foods.add(Food(snake))
 
+    run = True
     frametime = 0
-    while True:
+    while run:
         pg_screen.fill(Color.BLACK)
         snake.update(frametime, foods)
         foods.update()
