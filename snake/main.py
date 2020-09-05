@@ -4,12 +4,14 @@ from enum import Enum
 from pygame import Rect
 from typing import Union, Tuple, List
 from random import choice
-from pygame import event
+from pygame import event, gfxdraw
 
 
 class Color:
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
+    GREEN = (0, 255, 0)
+    RED = (255, 0, 0)
 
 
 class Game:
@@ -46,7 +48,8 @@ class SnakeUnit(pygame.sprite.Sprite):
             else place_after.move(Game.DEFAULT_RECT_SIZE, 0)
         )
         self.image = pygame.Surface((self.rect.w, self.rect.h))
-        self.image.fill(Color.WHITE)
+        self.image.fill(Color.GREEN)
+        pygame.draw.rect(self.image, Color.BLACK, self.rect, 2)
 
 
 class Snake(pygame.sprite.RenderPlain):
