@@ -162,23 +162,15 @@ def random_pos_rect(
     rect = size if size_is_rect else Rect(0, 0, size[0], size[1])
     max_width = Screen.WIDTH - rect.w
     max_height = Screen.HEIGHT - rect.h
-    range_for_rect = lambda max_size: range(0, max_size, Game.DEFAULT_RECT_SIZE)
-    possible_screen_rects = (
-        Rect(i, j, rect.w, rect.h)
-        for i in range_for_rect(max_width)
-        for j in range_for_rect(max_height)
-    )
     rects_without_collision = [
         rect
-        for rect in possible_screen_rects
+        for rect in possible_rects(max_width, max_height)
         if not rect.collidelist(excluded_rects) >= 0
     ]
     return choice(rects_without_collision)
 
 
-def possible_rects():
-    max_width = Screen.WIDTH
-    max_height = Screen.HEIGHT
+def possible_rects(max_width: int, max_height: int):
     range_for_rect = lambda max_size: range(0, max_size, Game.DEFAULT_RECT_SIZE)
     possible_screen_rects = (
         Rect(i, j, Game.DEFAULT_RECT_SIZE, Game.DEFAULT_RECT_SIZE)
@@ -192,7 +184,7 @@ def checkered_surface(screen: pygame.Surface) -> pygame.Surface:
     checkered = screen.copy()
     checkered.fill(Color.GREY)
 
-    for n, rect in enumerate(possible_rects()):
+    for n, rect in enumerate(possible_rects(Screen.WIDTH, Screen.HEIGHT)):
         if n % 2 == 0:
             pygame.draw.rect(checkered, Color.LIGHT_GREY, rect)
 
