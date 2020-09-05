@@ -43,14 +43,10 @@ class SnakeUnit(pygame.sprite.Sprite):
     Represents a single block of the snake on the screen
     """
 
-    def __init__(self, place_after=None):
+    def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         # The RenderPlain group has a draw method that will use the rect and image attributes
-        self.rect = (
-            Game.DEFAULT_RECT.copy()
-            if place_after is None
-            else Game.DEFAULT_RECT.copy()
-        )
+        self.rect = Game.DEFAULT_RECT.copy()
         self.image = pygame.Surface((self.rect.w, self.rect.h), flags=SRCALPHA).convert_alpha()
         self.image.fill(Color.GREEN)
         pygame.draw.rect(self.image, SRCALPHA, self.rect, 2)
