@@ -1,7 +1,7 @@
 import pygame
 import sys
 from enum import Enum
-from pygame import Rect
+from pygame import Rect, SRCALPHA
 from typing import Union, Tuple, List
 from random import choice
 from pygame import event, gfxdraw
@@ -49,9 +49,9 @@ class SnakeUnit(pygame.sprite.Sprite):
             if place_after is None
             else place_after.move(Game.DEFAULT_RECT_SIZE, 0)
         )
-        self.image = pygame.Surface((self.rect.w, self.rect.h))
+        self.image = pygame.Surface((self.rect.w, self.rect.h), flags=SRCALPHA).convert_alpha()
         self.image.fill(Color.GREEN)
-        pygame.draw.rect(self.image, Color.BLACK, self.rect, 2)
+        pygame.draw.rect(self.image, SRCALPHA, self.rect, 2)
 
 
 class Snake(pygame.sprite.RenderPlain):
@@ -141,7 +141,7 @@ class Food(pygame.sprite.Sprite):
         self.rect = random_pos_rect(
             Game.DEFAULT_RECT, [sprite.rect for sprite in snake_group.sprites()]
         )
-        self.image = pygame.Surface((self.rect.w, self.rect.h))
+        self.image = pygame.Surface((self.rect.w, self.rect.h), flags=SRCALPHA).convert_alpha()
         x, y = int(self.rect.w / 2) - 1, int(self.rect.h / 2) - 1
         radius = int(Game.DEFAULT_RECT_SIZE / 2) - 1
         gfxdraw.aacircle(self.image, x, y, radius, Color.RED)
@@ -181,7 +181,7 @@ def possible_rects(max_width: int, max_height: int):
 
 
 def checkered_surface(screen: pygame.Surface) -> pygame.Surface:
-    checkered = screen.copy()
+    checkered = screen.copy().convert_alpha()
     checkered.fill(Color.GREY)
 
     for n, rect in enumerate(possible_rects(Screen.WIDTH, Screen.HEIGHT)):
