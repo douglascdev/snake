@@ -49,7 +49,7 @@ class SnakeUnit(pygame.sprite.Sprite):
         self.rect = Game.DEFAULT_RECT.copy()
         self.image = pygame.Surface((self.rect.w, self.rect.h), flags=SRCALPHA).convert_alpha()
         self.image.fill(Color.GREEN)
-        pygame.draw.rect(self.image, SRCALPHA, self.rect, 2)
+        pygame.draw.rect(self.image, SRCALPHA, self.rect, 1)
 
 
 class Snake(pygame.sprite.RenderPlain):
