@@ -140,7 +140,10 @@ class Food(pygame.sprite.Sprite):
             Game.DEFAULT_RECT, [sprite.rect for sprite in snake_group.sprites()]
         )
         self.image = pygame.Surface((self.rect.w, self.rect.h))
-        self.image.fill(Color.WHITE)
+        x, y = int(self.rect.w / 2) - 1, int(self.rect.h / 2) - 1
+        radius = int(Game.DEFAULT_RECT_SIZE / 2) - 1
+        gfxdraw.aacircle(self.image, x, y, radius, Color.RED)
+        gfxdraw.filled_circle(self.image, x, y, radius, Color.RED)
 
 
 def random_pos_rect(
