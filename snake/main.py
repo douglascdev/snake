@@ -19,6 +19,8 @@ class Color:
 class Game:
     DEFAULT_RECT_SIZE = 40
     DEFAULT_RECT = Rect(0, 0, DEFAULT_RECT_SIZE, DEFAULT_RECT_SIZE)
+    NUM_UNITS_RESPAWN = 3
+    FRAMETIME_WAITED = 64
 
 
 class Screen:
@@ -47,7 +49,7 @@ class SnakeUnit(pygame.sprite.Sprite):
         self.rect = (
             Game.DEFAULT_RECT.copy()
             if place_after is None
-            else place_after.move(Game.DEFAULT_RECT_SIZE, 0)
+            else Game.DEFAULT_RECT.copy()
         )
         self.image = pygame.Surface((self.rect.w, self.rect.h), flags=SRCALPHA).convert_alpha()
         self.image.fill(Color.GREEN)
@@ -64,13 +66,14 @@ class Snake(pygame.sprite.RenderPlain):
         self.direction = Direction.E
         self.new_direction = self.direction
         self.frametime_counter = 0
-        self.frametime_for_step = 64
+        self.frametime_for_step = Game.FRAMETIME_WAITED
         self.shortcuts = {
             pygame.K_UP: Direction.N,
             pygame.K_DOWN: Direction.S,
             pygame.K_RIGHT: Direction.E,
             pygame.K_LEFT: Direction.W,
         }
+        self.add([SnakeUnit() for n in range(Game.NUM_UNITS_RESPAWN)])
 
     def update(self, frametime: int, food_group: pygame.sprite.Group):
         for event in pygame.event.get():
@@ -196,11 +199,7 @@ if __name__ == "__main__":
     pg_screen = pygame.display.set_mode((Screen.WIDTH, Screen.HEIGHT))
     background = checkered_surface(pg_screen)
     clock = pygame.time.Clock()
-    s = Game.DEFAULT_RECT_SIZE
-    u1 = SnakeUnit(place_after=Game.DEFAULT_RECT.move(s * 3, 0))
-    u2 = SnakeUnit(place_after=u1.rect)
-    u3 = SnakeUnit(place_after=u2.rect)
-    snake = Snake(u1, u2, u3)
+    snake = Snake()
     foods = pygame.sprite.RenderPlain()
     foods.add(Food(snake))
 
@@ -214,4 +213,3 @@ if __name__ == "__main__":
         foods.draw(pg_screen)
         pygame.display.update()
         frametime = clock.tick(Screen.FPS)
-
