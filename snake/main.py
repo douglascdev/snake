@@ -6,6 +6,7 @@ from typing import Union, Tuple, List
 from random import choice
 from pygame import event
 
+
 class Color:
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
@@ -67,7 +68,7 @@ class Snake(pygame.sprite.RenderPlain):
 
     def update(self, frametime: int, food_group: pygame.sprite.Group):
         for event in pygame.event.get():
-            if event.type==pygame.QUIT:
+            if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN and event.key in self.shortcuts.keys():
@@ -177,7 +178,7 @@ if __name__ == "__main__":
     foods = pygame.sprite.RenderPlain()
     foods.add(Food(snake))
 
-    run=True
+    run = True
     frametime = 0
     while run:
         pg_screen.fill(Color.BLACK)
@@ -186,5 +187,4 @@ if __name__ == "__main__":
         snake.draw(pg_screen)
         foods.draw(pg_screen)
         pygame.display.update()
-        frametime = clock.tick(Screen.FPS)     
-    
+        frametime = clock.tick(Screen.FPS)
