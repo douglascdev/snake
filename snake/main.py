@@ -12,6 +12,8 @@ class Color:
     BLACK = (0, 0, 0)
     GREEN = (0, 255, 0)
     RED = (255, 0, 0)
+    GREY = (50, 50, 50)
+    LIGHT_GREY = (60, 60, 60)
 
 
 class Game:
@@ -174,9 +176,33 @@ def random_pos_rect(
     return choice(rects_without_collision)
 
 
+def possible_rects():
+    max_width = Screen.WIDTH
+    max_height = Screen.HEIGHT
+    range_for_rect = lambda max_size: range(0, max_size, Game.DEFAULT_RECT_SIZE)
+    possible_screen_rects = (
+        Rect(i, j, Game.DEFAULT_RECT_SIZE, Game.DEFAULT_RECT_SIZE)
+        for i in range_for_rect(max_width)
+        for j in range_for_rect(max_height)
+    )
+    return possible_screen_rects
+
+
+def checkered_surface(screen: pygame.Surface) -> pygame.Surface:
+    checkered = screen.copy()
+    checkered.fill(Color.GREY)
+
+    for n, rect in enumerate(possible_rects()):
+        if n % 2 == 0:
+            pygame.draw.rect(checkered, Color.LIGHT_GREY, rect)
+
+    return checkered
+
+
 if __name__ == "__main__":
     pygame.display.init()
     pg_screen = pygame.display.set_mode((Screen.WIDTH, Screen.HEIGHT))
+    background = checkered_surface(pg_screen)
     clock = pygame.time.Clock()
     s = Game.DEFAULT_RECT_SIZE
     u1 = SnakeUnit(place_after=Game.DEFAULT_RECT.move(s * 3, 0))
@@ -189,10 +215,11 @@ if __name__ == "__main__":
     run = True
     frametime = 0
     while run:
-        pg_screen.fill(Color.BLACK)
+        pg_screen.blit(background, (0, 0))
         snake.update(frametime, foods)
         foods.update()
         snake.draw(pg_screen)
         foods.draw(pg_screen)
         pygame.display.update()
         frametime = clock.tick(Screen.FPS)
+
