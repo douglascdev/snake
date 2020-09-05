@@ -192,6 +192,7 @@ def checkered_surface(screen: pygame.Surface) -> pygame.Surface:
 
 if __name__ == "__main__":
     pygame.display.init()
+    pygame.display.set_caption("Snake with pygame")
     pg_screen = pygame.display.set_mode((Screen.WIDTH, Screen.HEIGHT))
     background = checkered_surface(pg_screen)
     clock = pygame.time.Clock()
