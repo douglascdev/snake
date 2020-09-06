@@ -1,24 +1,30 @@
+  
 import pygame
 import sys
 from enum import Enum
-from pygame import Rect
+from pygame import Rect, SRCALPHA
 from typing import Union, Tuple, List
 from random import choice
-from pygame import event
-
+from pygame import event, gfxdraw
 
 pygame.init()
-score=0
+
 
 class Color:
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
+    GREEN = (0, 255, 0)
+    RED = (255, 0, 0)
+    GREY = (50, 50, 50)
+    LIGHT_GREY = (60, 60, 60)
 
 
 class Game:
     DEFAULT_RECT_SIZE = 40
     DEFAULT_RECT = Rect(0, 0, DEFAULT_RECT_SIZE, DEFAULT_RECT_SIZE)
-
+    NUM_UNITS_RESPAWN = 3
+    FRAMETIME_WAITED = 64
+    score=0
 
 class Screen:
     NUM_BLOCKS_X = 20
@@ -27,7 +33,7 @@ class Screen:
     WIDTH, HEIGHT = block_size * NUM_BLOCKS_X, block_size * NUM_BLOCKS_Y
     RECT = Rect(0, 0, WIDTH, HEIGHT)
     FPS = 60
-    
+
 
 class Direction(Enum):
     s = Game.DEFAULT_RECT_SIZE
@@ -35,25 +41,18 @@ class Direction(Enum):
     N, S, W, E = (0, -s), (0, s), (-s, 0), (s, 0)
 
 
-    
-    
-
-
 class SnakeUnit(pygame.sprite.Sprite):
     """
     Represents a single block of the snake on the screen
     """
 
-    def __init__(self, place_after=None):
+    def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         # The RenderPlain group has a draw method that will use the rect and image attributes
-        self.rect = (
-            Game.DEFAULT_RECT.copy()
-            if place_after is None
-            else place_after.move(Game.DEFAULT_RECT_SIZE, 0)
-        )
-        self.image = pygame.Surface((self.rect.w, self.rect.h))
-        self.image.fill(Color.WHITE)
+        self.rect = Game.DEFAULT_RECT.copy()
+        self.image = pygame.Surface((self.rect.w, self.rect.h), flags=SRCALPHA).convert_alpha()
+        self.image.fill(Color.GREEN)
+        pygame.draw.rect(self.image, SRCALPHA, self.rect, 1)
 
 
 class Snake(pygame.sprite.RenderPlain):
@@ -64,15 +63,16 @@ class Snake(pygame.sprite.RenderPlain):
     def __init__(self, *snake_units):
         super().__init__(*snake_units)
         self.direction = Direction.E
+        self.new_direction = self.direction
         self.frametime_counter = 0
-        self.frametime_for_step = 64
+        self.frametime_for_step = Game.FRAMETIME_WAITED
         self.shortcuts = {
             pygame.K_UP: Direction.N,
             pygame.K_DOWN: Direction.S,
             pygame.K_RIGHT: Direction.E,
             pygame.K_LEFT: Direction.W,
         }
-        
+        self.add([SnakeUnit() for n in range(Game.NUM_UNITS_RESPAWN)])
 
     def update(self, frametime: int, food_group: pygame.sprite.Group):
         for event in pygame.event.get():
@@ -89,8 +89,8 @@ class Snake(pygame.sprite.RenderPlain):
                     Direction.E: Direction.W,
                 }
                 direction = self.shortcuts.get(event.key)
-                if opposites[self.direction] != direction:
-                    self.direction = direction
+                if opposites.get(self.direction) != direction:
+                    self.new_direction = direction
 
         # Using frametime keeps the movement relatively stable despite the FPS the game is running at
         if self.frametime_counter >= self.frametime_for_step:
@@ -105,12 +105,8 @@ class Snake(pygame.sprite.RenderPlain):
                 y_mov = self.direction.value[1]
                 new_head.rect = head.rect.move(x_mov, y_mov)
                 self.add(new_head)
-                global score
-                score+=1
-                font = pygame.font.SysFont("comicsans", 30, True)
-                text = font.render("Score: " + str(score), 1, (0,0,0)) # Arguments are: text, anti-aliasing, color
-                pg_screen.blit(text, (390, 10))
-                
+                Game.score+=1 #added the score \feature in GAME class, here the score icreases with increase in blocks
+
             # Correct snake position if it is out of screen
             head: SnakeUnit = self.sprites().pop()
             if head.rect.x < 0:
@@ -131,6 +127,7 @@ class Snake(pygame.sprite.RenderPlain):
         """
         sprites: List[SnakeUnit] = self.sprites()
         head: SnakeUnit = sprites.pop()
+        self.direction = self.new_direction
         x_mov = self.direction.value[0]
         y_mov = self.direction.value[1]
         previous_sprite_rect = head.rect.copy()
@@ -147,8 +144,11 @@ class Food(pygame.sprite.Sprite):
         self.rect = random_pos_rect(
             Game.DEFAULT_RECT, [sprite.rect for sprite in snake_group.sprites()]
         )
-        self.image = pygame.Surface((self.rect.w, self.rect.h))
-        self.image.fill(Color.WHITE)
+        self.image = pygame.Surface((self.rect.w, self.rect.h), flags=SRCALPHA).convert_alpha()
+        x, y = int(self.rect.w / 2) - 1, int(self.rect.h / 2) - 1
+        radius = int(Game.DEFAULT_RECT_SIZE / 2) - 4
+        gfxdraw.aacircle(self.image, x, y, radius, Color.RED)
+        gfxdraw.filled_circle(self.image, x, y, radius, Color.RED)
 
 
 def random_pos_rect(
@@ -165,41 +165,56 @@ def random_pos_rect(
     rect = size if size_is_rect else Rect(0, 0, size[0], size[1])
     max_width = Screen.WIDTH - rect.w
     max_height = Screen.HEIGHT - rect.h
-    range_for_rect = lambda max_size: range(0, max_size, Game.DEFAULT_RECT_SIZE)
-    possible_screen_rects = (
-        Rect(i, j, rect.w, rect.h)
-        for i in range_for_rect(max_width)
-        for j in range_for_rect(max_height)
-    )
     rects_without_collision = [
         rect
-        for rect in possible_screen_rects
+        for rect in possible_rects(max_width, max_height)
         if not rect.collidelist(excluded_rects) >= 0
     ]
     return choice(rects_without_collision)
 
 
+def possible_rects(max_width: int, max_height: int):
+    range_for_rect = lambda max_size: range(0, max_size, Game.DEFAULT_RECT_SIZE)
+    possible_screen_rects = (
+        Rect(i, j, Game.DEFAULT_RECT_SIZE, Game.DEFAULT_RECT_SIZE)
+        for i in range_for_rect(max_width)
+        for j in range_for_rect(max_height)
+    )
+    return possible_screen_rects
+
+
+def checkered_surface(screen: pygame.Surface) -> pygame.Surface:
+    checkered = screen.copy().convert_alpha()
+    checkered.fill(Color.GREY)
+
+    for n, rect in enumerate(possible_rects(Screen.WIDTH, Screen.HEIGHT)):
+        if n % 2 == 0:
+            pygame.draw.rect(checkered, Color.LIGHT_GREY, rect)
+
+    return checkered
+
+def score_update(score): #defined a score update fuinction
+    font = pygame.font.SysFont("sans-sarif", 35, True)
+    text = font.render("Score: " + str(score), 100, Color.WHITE) # Arguments are: text, anti-aliasing, color
+    pg_screen.blit(text, (390, 10))
+
 if __name__ == "__main__":
     pygame.display.init()
+    pygame.display.set_caption("Snake with pygame")
     pg_screen = pygame.display.set_mode((Screen.WIDTH, Screen.HEIGHT))
+    background = checkered_surface(pg_screen)
     clock = pygame.time.Clock()
-    s = Game.DEFAULT_RECT_SIZE
-    u1 = SnakeUnit(place_after=Game.DEFAULT_RECT.move(s * 3, 0))
-    u2 = SnakeUnit(place_after=u1.rect)
-    u3 = SnakeUnit(place_after=u2.rect)
-    snake = Snake(u1, u2, u3)
+    snake = Snake()
     foods = pygame.sprite.RenderPlain()
     foods.add(Food(snake))
 
     run = True
     frametime = 0
     while run:
-        pg_screen.fill(Color.BLACK)
+        pg_screen.blit(background, (0, 0))
         snake.update(frametime, foods)
         foods.update()
-        font = pygame.font.SysFont("sans-sarif", 35, True)
-        text = font.render("Score: " + str(score), 100, (0,255,0)) # Arguments are: text, anti-aliasing, color
-        pg_screen.blit(text, (390, 10))
+        score_update(Game.score)#the score update function
         snake.draw(pg_screen)
         foods.draw(pg_screen)
         pygame.display.update()
