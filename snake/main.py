@@ -7,6 +7,9 @@ from random import choice
 from pygame import event
 
 
+pygame.init()
+score=0
+
 class Color:
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
@@ -24,12 +27,16 @@ class Screen:
     WIDTH, HEIGHT = block_size * NUM_BLOCKS_X, block_size * NUM_BLOCKS_Y
     RECT = Rect(0, 0, WIDTH, HEIGHT)
     FPS = 60
-
+    
 
 class Direction(Enum):
     s = Game.DEFAULT_RECT_SIZE
     # Coordinates to sum to create movement at a step for each direction
     N, S, W, E = (0, -s), (0, s), (-s, 0), (s, 0)
+
+
+    
+    
 
 
 class SnakeUnit(pygame.sprite.Sprite):
@@ -65,6 +72,7 @@ class Snake(pygame.sprite.RenderPlain):
             pygame.K_RIGHT: Direction.E,
             pygame.K_LEFT: Direction.W,
         }
+        
 
     def update(self, frametime: int, food_group: pygame.sprite.Group):
         for event in pygame.event.get():
@@ -97,7 +105,12 @@ class Snake(pygame.sprite.RenderPlain):
                 y_mov = self.direction.value[1]
                 new_head.rect = head.rect.move(x_mov, y_mov)
                 self.add(new_head)
-
+                global score
+                score+=1
+                font = pygame.font.SysFont("comicsans", 30, True)
+                text = font.render("Score: " + str(score), 1, (0,0,0)) # Arguments are: text, anti-aliasing, color
+                pg_screen.blit(text, (390, 10))
+                
             # Correct snake position if it is out of screen
             head: SnakeUnit = self.sprites().pop()
             if head.rect.x < 0:
@@ -184,6 +197,9 @@ if __name__ == "__main__":
         pg_screen.fill(Color.BLACK)
         snake.update(frametime, foods)
         foods.update()
+        font = pygame.font.SysFont("sans-sarif", 35, True)
+        text = font.render("Score: " + str(score), 100, (0,255,0)) # Arguments are: text, anti-aliasing, color
+        pg_screen.blit(text, (390, 10))
         snake.draw(pg_screen)
         foods.draw(pg_screen)
         pygame.display.update()
