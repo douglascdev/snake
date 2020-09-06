@@ -196,7 +196,7 @@ def checkered_surface(screen: pygame.Surface) -> pygame.Surface:
 def score_update(score): #defined a score update fuinction
     font = pygame.font.SysFont("sans-sarif", 35, True)
     text = font.render("Score: " + str(score), 100, Color.WHITE) # Arguments are: text, anti-aliasing, color
-    pg_screen.blit(text, (390, 10))
+    pg_screen.blit(text, (650, 10))
 
 if __name__ == "__main__":
     pygame.display.init()
