@@ -1,9 +1,7 @@
+import pygame
 from random import choice
 from typing import Union, Tuple, List
-
-import pygame
 from pygame.rect import Rect
-
 from snake.constants import Screen, Game, Color
 
 
@@ -50,11 +48,33 @@ def checkered_surface(screen: pygame.Surface) -> pygame.Surface:
     return checkered
 
 
-def score_update(score, screen):
-    font = pygame.font.SysFont("comicsans", Game.DEFAULT_RECT_SIZE, True)
-    text = font.render(
-        "Score: " + str(score), 100, Color.WHITE
-    )  # Arguments are: text, anti-aliasing, color
-    screen.blit(
-        text, (Screen.WIDTH - (4 * Screen.block_size), int(Game.DEFAULT_RECT_SIZE / 10))
+def score_update(score):
+    text = "Score: " + str(score)
+    x, y = Screen.WIDTH - (4 * Screen.block_size), int(Game.DEFAULT_RECT_SIZE / 10)
+    draw_text(x, y, text)
+
+
+def draw_text(x: int, y: int, text: str):
+    screen: pygame.Surface = pygame.display.get_surface()
+    screen.blit(create_text_surface(text), (x, y))
+
+
+def draw_center_text(text: str):
+    surface = create_text_surface(text)
+    surface_rect = surface.get_rect()
+    x, y = (
+        int(Screen.WIDTH - surface_rect.w) / 2,
+        int(Screen.HEIGHT - surface_rect.h) / 2,
     )
+    screen: pygame.Surface = pygame.display.get_surface()
+    screen.blit(surface, (x, y))
+
+
+def create_text_surface(text: str) -> pygame.Surface:
+    name, size, color = (
+        Game.FONT.get("name"),
+        Game.FONT.get("size"),
+        Game.FONT.get("color"),
+    )
+    font = pygame.font.SysFont(name, size)
+    return font.render(text, 100, color)
