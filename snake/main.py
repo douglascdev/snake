@@ -21,7 +21,7 @@ class Game:
     DEFAULT_RECT = Rect(0, 0, DEFAULT_RECT_SIZE, DEFAULT_RECT_SIZE)
     NUM_UNITS_RESPAWN = 3
     FRAMETIME_WAITED = 64
-    
+
 
 class Screen:
     NUM_BLOCKS_X = 20
@@ -47,7 +47,9 @@ class SnakeUnit(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         # The RenderPlain group has a draw method that will use the rect and image attributes
         self.rect = Game.DEFAULT_RECT.copy()
-        self.image = pygame.Surface((self.rect.w, self.rect.h), flags=SRCALPHA).convert_alpha()
+        self.image = pygame.Surface(
+            (self.rect.w, self.rect.h), flags=SRCALPHA
+        ).convert_alpha()
         self.image.fill(Color.GREEN)
         pygame.draw.rect(self.image, SRCALPHA, self.rect, 1)
 
@@ -103,8 +105,7 @@ class Snake(pygame.sprite.RenderPlain):
                 new_head.rect = head.rect.move(x_mov, y_mov)
                 self.add(new_head)
                 global score
-                score+=1
-
+                score += 1
 
             # Correct snake position if it is out of screen
             head: SnakeUnit = self.sprites().pop()
@@ -143,7 +144,9 @@ class Food(pygame.sprite.Sprite):
         self.rect = random_pos_rect(
             Game.DEFAULT_RECT, [sprite.rect for sprite in snake_group.sprites()]
         )
-        self.image = pygame.Surface((self.rect.w, self.rect.h), flags=SRCALPHA).convert_alpha()
+        self.image = pygame.Surface(
+            (self.rect.w, self.rect.h), flags=SRCALPHA
+        ).convert_alpha()
         x, y = int(self.rect.w / 2) - 1, int(self.rect.h / 2) - 1
         radius = int(Game.DEFAULT_RECT_SIZE / 2) - 4
         gfxdraw.aacircle(self.image, x, y, radius, Color.RED)
@@ -192,10 +195,15 @@ def checkered_surface(screen: pygame.Surface) -> pygame.Surface:
 
     return checkered
 
-def score_update(score,screen):
+
+def score_update(score, screen):
     font = pygame.font.SysFont("comicsans", Game.DEFAULT_RECT_SIZE, True)
-    text = font.render("Score: " + str(score), 100, Color.WHITE) # Arguments are: text, anti-aliasing, color
-    screen.blit(text, (Screen.WIDTH-(4*Screen.block_size), int(Game.DEFAULT_RECT_SIZE/10)))
+    text = font.render(
+        "Score: " + str(score), 100, Color.WHITE
+    )  # Arguments are: text, anti-aliasing, color
+    screen.blit(
+        text, (Screen.WIDTH - (4 * Screen.block_size), int(Game.DEFAULT_RECT_SIZE / 10))
+    )
 
 
 if __name__ == "__main__":
@@ -209,7 +217,7 @@ if __name__ == "__main__":
     foods = pygame.sprite.RenderPlain()
     foods.add(Food(snake))
 
-    score=0
+    score = 0
     run = True
     frametime = 0
     while run:
