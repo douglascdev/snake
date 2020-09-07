@@ -87,6 +87,15 @@ class Snake(pygame.sprite.RenderPlain):
             ):
                 self.dead = True
 
+            # Kill snake if it collides with itself
+            if not self.dead:
+                sprites: List[SnakeUnit] = self.sprites()
+                head: SnakeUnit = sprites.pop()
+                for sprite in sprites:
+                    if pygame.sprite.collide_rect(sprite, head):
+                        self.dead = True
+                        break
+
         else:
             self.frametime_counter += frametime
 
