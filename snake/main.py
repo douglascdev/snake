@@ -7,8 +7,6 @@ from random import choice
 from pygame import event, gfxdraw
 
 
-pygame.init()
-
 class Color:
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
@@ -19,11 +17,11 @@ class Color:
 
 
 class Game:
-    DEFAULT_RECT_SIZE = 40
+    DEFAULT_RECT_SIZE = 60
     DEFAULT_RECT = Rect(0, 0, DEFAULT_RECT_SIZE, DEFAULT_RECT_SIZE)
     NUM_UNITS_RESPAWN = 3
     FRAMETIME_WAITED = 64
-    score=0
+    
 
 class Screen:
     NUM_BLOCKS_X = 20
@@ -32,7 +30,6 @@ class Screen:
     WIDTH, HEIGHT = block_size * NUM_BLOCKS_X, block_size * NUM_BLOCKS_Y
     RECT = Rect(0, 0, WIDTH, HEIGHT)
     FPS = 60
-    
 
 
 class Direction(Enum):
@@ -105,7 +102,9 @@ class Snake(pygame.sprite.RenderPlain):
                 y_mov = self.direction.value[1]
                 new_head.rect = head.rect.move(x_mov, y_mov)
                 self.add(new_head)
-                Game.score+=1
+                global score
+                score+=1
+
 
             # Correct snake position if it is out of screen
             head: SnakeUnit = self.sprites().pop()
@@ -193,14 +192,15 @@ def checkered_surface(screen: pygame.Surface) -> pygame.Surface:
 
     return checkered
 
-def score_update(score):
-    font = pygame.font.SysFont("sans-sarif", 35, True)
+def score_update(score,screen):
+    font = pygame.font.SysFont("comicsans", Game.DEFAULT_RECT_SIZE, True)
     text = font.render("Score: " + str(score), 100, Color.WHITE) # Arguments are: text, anti-aliasing, color
-    pg_screen.blit(text, (650, 10))
+    screen.blit(text, (Screen.WIDTH-(4*Screen.block_size), int(Game.DEFAULT_RECT_SIZE/10)))
 
 
 if __name__ == "__main__":
     pygame.display.init()
+    pygame.font.init()
     pygame.display.set_caption("Snake with pygame")
     pg_screen = pygame.display.set_mode((Screen.WIDTH, Screen.HEIGHT))
     background = checkered_surface(pg_screen)
@@ -209,13 +209,14 @@ if __name__ == "__main__":
     foods = pygame.sprite.RenderPlain()
     foods.add(Food(snake))
 
+    score=0
     run = True
     frametime = 0
     while run:
         pg_screen.blit(background, (0, 0))
         snake.update(frametime, foods)
         foods.update()
-        score_update(Game.score)
+        score_update(score, pg_screen)
         snake.draw(pg_screen)
         foods.draw(pg_screen)
         pygame.display.update()
