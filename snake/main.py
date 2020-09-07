@@ -47,7 +47,9 @@ class SnakeUnit(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         # The RenderPlain group has a draw method that will use the rect and image attributes
         self.rect = Game.DEFAULT_RECT.copy()
-        self.image = pygame.Surface((self.rect.w, self.rect.h), flags=SRCALPHA).convert_alpha()
+        self.image = pygame.Surface(
+            (self.rect.w, self.rect.h), flags=SRCALPHA
+        ).convert_alpha()
         self.image.fill(Color.GREEN)
         pygame.draw.rect(self.image, SRCALPHA, self.rect, 1)
 
@@ -102,6 +104,8 @@ class Snake(pygame.sprite.RenderPlain):
                 y_mov = self.direction.value[1]
                 new_head.rect = head.rect.move(x_mov, y_mov)
                 self.add(new_head)
+                global score
+                score += 1
 
             # Correct snake position if it is out of screen
             head: SnakeUnit = self.sprites().pop()
@@ -140,7 +144,9 @@ class Food(pygame.sprite.Sprite):
         self.rect = random_pos_rect(
             Game.DEFAULT_RECT, [sprite.rect for sprite in snake_group.sprites()]
         )
-        self.image = pygame.Surface((self.rect.w, self.rect.h), flags=SRCALPHA).convert_alpha()
+        self.image = pygame.Surface(
+            (self.rect.w, self.rect.h), flags=SRCALPHA
+        ).convert_alpha()
         x, y = int(self.rect.w / 2) - 1, int(self.rect.h / 2) - 1
         radius = int(Game.DEFAULT_RECT_SIZE / 2) - 4
         gfxdraw.aacircle(self.image, x, y, radius, Color.RED)
@@ -190,8 +196,19 @@ def checkered_surface(screen: pygame.Surface) -> pygame.Surface:
     return checkered
 
 
+def score_update(score, screen):
+    font = pygame.font.SysFont("comicsans", Game.DEFAULT_RECT_SIZE, True)
+    text = font.render(
+        "Score: " + str(score), 100, Color.WHITE
+    )  # Arguments are: text, anti-aliasing, color
+    screen.blit(
+        text, (Screen.WIDTH - (4 * Screen.block_size), int(Game.DEFAULT_RECT_SIZE / 10))
+    )
+
+
 if __name__ == "__main__":
     pygame.display.init()
+    pygame.font.init()
     pygame.display.set_caption("Snake with pygame")
     pg_screen = pygame.display.set_mode((Screen.WIDTH, Screen.HEIGHT))
     background = checkered_surface(pg_screen)
@@ -200,12 +217,14 @@ if __name__ == "__main__":
     foods = pygame.sprite.RenderPlain()
     foods.add(Food(snake))
 
+    score = 0
     run = True
     frametime = 0
     while run:
         pg_screen.blit(background, (0, 0))
         snake.update(frametime, foods)
         foods.update()
+        score_update(score, pg_screen)
         snake.draw(pg_screen)
         foods.draw(pg_screen)
         pygame.display.update()
