@@ -70,12 +70,12 @@ class Snake(pygame.sprite.RenderPlain):
             head: SnakeUnit = self.sprites().pop()
             collided_foods = pygame.sprite.spritecollide(head, food_group, dokill=True)
             if collided_foods:
-                food_group.add(Food(self))
                 new_head = SnakeUnit()
                 x_mov = self.direction.value[0]
                 y_mov = self.direction.value[1]
                 new_head.rect = head.rect.move(x_mov, y_mov)
                 self.add(new_head)
+                food_group.add(Food(self))
 
             # Kill snake if it is out of screen
             head: SnakeUnit = self.sprites().pop()
