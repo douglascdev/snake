@@ -6,7 +6,7 @@ from snake.constants import Screen, Game, Color
 
 
 def random_pos_rect(
-        size: Union[Rect, Tuple[int, int]], excluded_rects: List[Rect]
+    size: Union[Rect, Tuple[int, int]], excluded_rects: List[Rect]
 ) -> Rect:
     """
     Generates random position within the screen. Excludes points that would be out of screen and possibly colliding
