@@ -9,8 +9,8 @@ A snake game made with Pygame and Python3, still missing a lot of features.
 You can contribute by solving any of our open issues, or  any other improvement you feel like doing!
 - Fork and clone the repository
 - Install the dev requirements with `pip3 install -r dev-requirements.txt`
-- Code and test your functionality
-- Make sure the code style is compliant with black formatter, by running `black .` on the project root directory.
+- Run `pre-commit install`. After every commit, pre-commit will use black to format the style of your code, keeping a consistent style for the whole project. If your files get reformatted, your changes(and black's) will stay staged and you'll have to commit again.
+- Code and test your functionality 
 - Create a pull request
 
 ## Install

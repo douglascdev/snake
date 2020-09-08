@@ -1,2 +1,3 @@
 pygame
 black
+pre-commit
