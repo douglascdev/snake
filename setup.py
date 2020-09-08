@@ -10,16 +10,17 @@ REQUIREMENTS = ["pygame", "black", "pre-commit"]
 
 
 # calling the setup function
-setup(name="snake",
-      version="0.1",
-      description="A simple snake game",
-      long_description=long_description,
-      long_description_content_type = "text/markdown",
-      url="https://github.com/douglas-cpp/snake",
-      author="Douglas",
-      author_email="douglasc.dev@gmail.com",
-      license="Apache License 2.0",
-      packages=find_packages(include=["snake"]),
-      install_requires=REQUIREMENTS,
-      keywords="game"
-      )
+setup(
+    name="snake",
+    version="0.1",
+    description="A simple snake game",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url="https://github.com/douglas-cpp/snake",
+    author="Douglas",
+    author_email="douglasc.dev@gmail.com",
+    license="Apache License 2.0",
+    packages=find_packages(include=["snake"]),
+    install_requires=REQUIREMENTS,
+    keywords="game",
+)
