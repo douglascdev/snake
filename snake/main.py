@@ -18,8 +18,6 @@ def game():
     while True:
         pg_screen.blit(background, (0, 0))
         snake.update(frametime, foods)
-        if snake.dead:
-            return
         foods.update()
         snake.draw(pg_screen)
         foods.draw(pg_screen)
@@ -27,6 +25,8 @@ def game():
         score_update(score)
         pygame.display.update()
         frametime = clock.tick(Screen.FPS)
+        if snake.dead:
+            return
 
 
 def game_over():
