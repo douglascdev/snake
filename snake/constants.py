@@ -1,15 +1,15 @@
 from enum import Enum
 from pygame.rect import Rect
-from pygame.color import Color
+from pygame import color
 
 
 class Color:
-    WHITE = Color(200, 200, 200)
-    BLACK = Color(0, 0, 0)
-    GREEN = Color(0, 200, 0)
-    RED = Color(230, 0, 0)
-    GREY = Color(50, 50, 50)
-    LIGHT_GREY = Color(60, 60, 60)
+    WHITE = color.Color(200, 200, 200)
+    BLACK = color.Color(0, 0, 0)
+    GREEN = color.Color(0, 200, 0)
+    RED = color.Color(230, 0, 0)
+    GREY = color.Color(50, 50, 50)
+    LIGHT_GREY = color.Color(60, 60, 60)
 
 
 class Game:
