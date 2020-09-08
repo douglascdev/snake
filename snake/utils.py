@@ -1,12 +1,12 @@
-import pygame
 from random import choice
 from typing import Union, Tuple, List
+import pygame
 from pygame.rect import Rect
 from snake.constants import Screen, Game, Color
 
 
 def random_pos_rect(
-    size: Union[Rect, Tuple[int, int]], excluded_rects: List[Rect]
+        size: Union[Rect, Tuple[int, int]], excluded_rects: List[Rect]
 ) -> Rect:
     """
     Generates random position within the screen. Excludes points that would be out of screen and possibly colliding
@@ -28,12 +28,12 @@ def random_pos_rect(
 
 
 def possible_rects(max_width: int, max_height: int):
-    range_for_rect = lambda max_size: range(0, max_size, Game.DEFAULT_RECT_SIZE)
     possible_screen_rects = (
         Rect(i, j, Game.DEFAULT_RECT_SIZE, Game.DEFAULT_RECT_SIZE)
-        for i in range_for_rect(max_width)
-        for j in range_for_rect(max_height)
+        for i in range(0, max_width, Game.DEFAULT_RECT_SIZE)
+        for j in range(0, max_height, Game.DEFAULT_RECT_SIZE)
     )
+
     return possible_screen_rects
 
 
