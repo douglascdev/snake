@@ -69,7 +69,7 @@ class Snake(pygame.sprite.RenderPlain):
             self.frametime_counter = 0
             head: SnakeUnit = self.sprites().pop()
             collided_foods = pygame.sprite.spritecollide(head, food_group, dokill=True)
-            if len(collided_foods) > 0:
+            if collided_foods:
                 food_group.add(Food(self))
                 new_head = SnakeUnit()
                 x_mov = self.direction.value[0]
