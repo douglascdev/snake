@@ -6,13 +6,13 @@ with open("README.md", encoding="utf-8") as file:
 
 
 # specify requirements of your package here
-REQUIREMENTS = ["pygame", "black", "pre-commit"]
+REQUIREMENTS = ["pygame"]
 
 
 # calling the setup function
 setup(
     name="snake",
-    version="0.1",
+    version="0.0.1",
     description="A simple snake game",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -21,6 +21,11 @@ setup(
     author_email="douglasc.dev@gmail.com",
     license="Apache License 2.0",
     packages=find_packages(include=["snake"]),
+    entry_points={
+        "console_scripts": [
+            "snake = snake.main:main",
+        ],
+    },
     install_requires=REQUIREMENTS,
     keywords="game",
 )
