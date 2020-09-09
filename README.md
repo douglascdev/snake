@@ -16,5 +16,5 @@ You can contribute by solving any of our open issues, or  any other improvement 
 
 ## Install
 - Install python3 from https://www.python.org/download/releases/3.0/
-- Install the game with `pip install git+https://github.com/douglas-cpp/snake`
-- Run it with `python -c "from snake import main;main.main()"`
+- Install the game with `pip3 install git+https://github.com/douglas-cpp/snake`
+- Run it with `python3 -c "from snake import main;main.main()"`
