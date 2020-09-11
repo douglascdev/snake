@@ -6,8 +6,6 @@ from snake.entity import Snake, Food
 from snake.utils import checkered_surface, score_update
 from time import time
 
-DEATH_WAIT_TIME = 0.175
-
 
 def game():
     pg_screen: pygame.Surface = pygame.display.get_surface()
@@ -47,7 +45,7 @@ def game_over():
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 # wait for a small delay to prevent unwanted game restarts
-                if time() - death_time > DEATH_WAIT_TIME:
+                if time() - death_time > Game.DEATH_WAIT_TIME:
                     return
         pygame.display.update()
 
