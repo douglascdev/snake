@@ -4,6 +4,9 @@ from snake import utils
 from snake.constants import Screen, Game
 from snake.entity import Snake, Food
 from snake.utils import checkered_surface, score_update
+from time import time
+
+DEATH_WAIT_TIME = 0.175
 
 
 def game():
@@ -35,15 +38,17 @@ def game_over():
     pg_screen.blit(background, (0, 0))
     utils.draw_center_text("Game over! Press any key to continue")
     pygame.display.update()
-    # Avoid continuing from game over screen after death because of a missclick
-    pygame.time.wait(500)
+    # record time of death
+    death_time = time()
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
-                return
+                # wait for a small delay to prevent unwanted game restarts
+                if time() - death_time > DEATH_WAIT_TIME:
+                    return
         pygame.display.update()
 
 
