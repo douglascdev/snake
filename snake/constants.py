@@ -13,6 +13,7 @@ class Color:
 
 
 class Game:
+    DEATH_WAIT_TIME = 0.175
     DEFAULT_RECT_SIZE = 40
     DEFAULT_RECT = Rect(0, 0, DEFAULT_RECT_SIZE, DEFAULT_RECT_SIZE)
     FONT = {"name": "comicsans", "size": 40, "color": Color.WHITE}
